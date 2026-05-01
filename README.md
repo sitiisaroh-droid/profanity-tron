@@ -119,15 +119,15 @@ Pandaoyoo/profanity-tron 仓库的审计报告，与 Powercodess/profanity-tron 
 
 5. **看雪分析链接（审计报告中引用，关联TRX靓号生成器后门）**：https://bbs.kanxue.com/thread-289060.htm（2025年发布，证实存在TRX靓号生成器后门，但与本次自导自演事件无关）
 
-6. **恶意攻击正常仓库证据**：https://github.com/ninazero/tron
+6. **恶意攻击正常仓库证据**：https://github.com/ninazero/tron（该仓库是一个完全独立、正常合规的开源项目，经审计确认与上述Powercodess/Pandaoyoo抹黑自导自演事件**毫无关联**。该仓库是无辜被攻击的受害者，而非参与者。）
 
-   经审计确认，该仓库与上述抹黑自导自演事件无关，属于正常合规的开源项目。然而，该账号为了影响正常项目的流量引流，对此仓库进行了恶意攻击行为。通过分析发现，其采用的虚假刷星等手段操作痕迹明显，所使用的账号均为低活跃度的僵尸账号，这种行为严重违反了开源社区的基本准则。根据技术溯源信息显示，该操作者位于安徽地区，此类违法行为终将受到法律制裁。
+7. **Powercodess恶意刷星证据**：https://github.com/Powercodess/profanity-tron - 该仓库通过大量僵尸号恶意刷星制造虚假热度，目的是抹黑正常TRX靓号生成项目，为其自导自演的"后门曝光"闹剧营造"多人实锤"假象，最终引流至其自身控制的"修复版"仓库收割用户
 
 <p align="center">
   <img width="100%" src="/6.png?raw=true"/>
 </p>
 
-7. **浏览器书签暴露证据**：通过浏览器书签分析可见，该操作者长期从事灰黑产业活动，却冒充安全审计人员进行虚假宣传，企图披着"正义"外衣实施诈骗。其行为纯属自导自演的闹剧，本质是借"审计"之名行"引流收割"之实。根据技术溯源，该人员位于安徽地区，其违法行为已被记录，相关执法部门将会依法处理。
+8. **浏览器书签暴露证据**：通过浏览器书签分析可见，该操作者长期从事灰黑产业活动，却冒充安全审计人员进行虚假宣传，企图披着"正义"外衣实施诈骗。其行为纯属自导自演的闹剧，本质是借"审计"之名行"引流收割"之实。根据技术溯源，该人员位于安徽地区，其违法行为已被记录，相关执法部门将会依法处理。
 
 <p align="center">
   <img width="100%" src="/7.png?raw=true"/>
@@ -147,3 +147,10 @@ Pandaoyoo/profanity-tron 仓库的审计报告，与 Powercodess/profanity-tron 
 - [Tiếng Việt](README_VI.md)
 - [日本語](README_JA.md)
 - [हिन्दी](README_HI.md)
+- [한국어](README_KO.md)
+- [Español](README_ES.md)
+- [Français](README_FR.md)
+- [Deutsch](README_DE.md)
+- [Русский](README_RU.md)
+- [Português](README_PT.md)
+- [العربية](README_AR.md)

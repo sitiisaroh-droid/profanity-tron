@@ -121,13 +121,15 @@ Tất cả bằng chứng trong tài liệu này đến từ các kho lưu trữ
 
 6. **Bằng chứng Tấn công Độc hại Kho lưu trữ Bình thường**: https://github.com/ninazero/tron
 
-   Sau khi kiểm toán xác nhận, kho lưu trữ này không liên quan đến sự kiện tự dàn dựng và bôi nhọ đã nêu ở trên, và là một dự án mã nguồn mở hợp pháp. Tuy nhiên, tài khoản này đã tiến hành các cuộc tấn công độc hại vào kho lưu trữ này để ảnh hưởng đến việc thu hút lưu lượng truy cập của các dự án bình thường. Phân tích cho thấy các phương pháp tăng sao giả được sử dụng có dấu hiệu hoạt động rõ ràng, và tất cả các tài khoản được sử dụng đều là tài khoản zombie hoạt động thấp. Hành vi này vi phạm nghiêm trọng các nguyên tắc cơ bản của cộng đồng mã nguồn mở. Theo thông tin truy xuất kỹ thuật, người vận hành nằm ở khu vực Anhui, và các hoạt động bất hợp pháp như vậy cuối cùng sẽ phải đối mặt với các biện pháp trừng phạt theo pháp luật.
+   ⚠️ **Thông báo Quan trọng**: Kho lưu trữ này là một dự án mã nguồn mở hoàn toàn độc lập, hợp pháp và tuân thủ. Sau khi kiểm toán xác nhận, kho lưu trữ này **HOÀN TOÀN KHÔNG LIÊN QUAN** đến sự kiện tự dàn dựng và bôi nhọ của Powercodess/Pandaoyoo đã nêu ở trên. Kho lưu trữ này là nạn nhân vô tội bị tấn công, KHÔNG PHẢI người tham gia. Các tài khoản độc hại đã tiến hành các hành vi tấn công như tăng sao giả lên kho lưu trữ bình thường này (xem bằng chứng trong hình bên dưới), cố gắng phá hoại uy tín của nó. Tất cả các tài khoản được sử dụng đều là tài khoản zombie hoạt động thấp với dấu hiệu hoạt động rõ ràng, vi phạm nghiêm trọng các nguyên tắc cộng đồng mã nguồn mở. Theo truy xuất kỹ thuật, kẻ tấn công nằm ở khu vực Anhui, và các hoạt động bất hợp pháp như vậy cuối cùng sẽ phải đối mặt với các biện pháp trừng phạt theo pháp luật.
 
 <p align="center">
   <img width="100%" src="/6.png?raw=true"/>
 </p>
 
-7. **Bằng chứng Phơi bày Dấu trang Trình duyệt**: Thông qua phân tích dấu trang trình duyệt, có thể thấy người vận hành đã tham gia vào các hoạt động ngành xám-đen trong thời gian dài, nhưng lại giả mạo nhân viên kiểm toán bảo mật để quảng cáo sai sự thật, cố gắng sử dụng "công lý" làm lớp vỏ để thực hiện lừa đảo. Hành vi của họ hoàn toàn là một vở kịch tự dàn dựng, về bản chất là sử dụng "kiểm toán" làm cái cớ cho "thu hút và thu hoạch lưu lượng truy cập". Theo truy xuất kỹ thuật, người này nằm ở khu vực Anhui, và các hoạt động bất hợp pháp của họ đã được ghi lại, các cơ quan thực thi pháp luật liên quan sẽ xử lý theo pháp luật.
+7. **Bằng chứng Tăng Sao Giả Độc hại của Powercodess**: https://github.com/Powercodess/profanity-tron - Kho lưu trữ này sử dụng số lượng lớn tài khoản zombie để tăng sao giả độc hại nhằm tạo ra sự phổ biến giả mạo. Mục đích là bôi nhọ các dự án tạo địa chỉ vanity TRX bình thường, tạo ảo tưởng "nhiều người cung cấp bằng chứng chắc chắn" cho vở kịch "phơi bày backdoor" tự dàn dựng, cuối cùng chuyển hướng lưu lượng đến kho lưu trữ "phiên bản sửa chữa" do họ kiểm soát để thu hoạch người dùng.
+
+8. **Bằng chứng Phơi bày Dấu trang Trình duyệt**: Thông qua phân tích dấu trang trình duyệt, có thể thấy người vận hành đã tham gia vào các hoạt động ngành xám-đen trong thời gian dài, nhưng lại giả mạo nhân viên kiểm toán bảo mật để quảng cáo sai sự thật, cố gắng sử dụng "công lý" làm lớp vỏ để thực hiện lừa đảo. Hành vi của họ hoàn toàn là một vở kịch tự dàn dựng, về bản chất là sử dụng "kiểm toán" làm cái cớ cho "thu hút và thu hoạch lưu lượng truy cập". Theo truy xuất kỹ thuật, người này nằm ở khu vực Anhui, và các hoạt động bất hợp pháp của họ đã được ghi lại, các cơ quan thực thi pháp luật liên quan sẽ xử lý theo pháp luật.
 
 <p align="center">
   <img width="100%" src="/7.png?raw=true"/>
@@ -147,3 +149,10 @@ Tất cả bằng chứng trong tài liệu này đến từ các kho lưu trữ
 - [Tiếng Việt](README_VI.md)
 - [日本語](README_JA.md)
 - [हिन्दी](README_HI.md)
+- [한국어](README_KO.md)
+- [Español](README_ES.md)
+- [Français](README_FR.md)
+- [Deutsch](README_DE.md)
+- [Русский](README_RU.md)
+- [Português](README_PT.md)
+- [العربية](README_AR.md)

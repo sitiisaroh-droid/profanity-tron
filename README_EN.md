@@ -121,13 +121,15 @@ All evidence in this document comes from public GitHub repositories, focusing on
 
 6. **Evidence of Malicious Attack on Legitimate Repository**: https://github.com/ninazero/tron
 
-   After audit confirmation, this repository is unrelated to the above-mentioned self-orchestrated defamation incident and is a legitimate and compliant open-source project. However, the account conducted malicious attacks on this repository to affect the traffic diversion of normal projects. Analysis reveals that the fake star-boosting methods used have obvious operational traces, and the accounts used are all low-activity zombie accounts. This behavior seriously violates the basic principles of the open-source community. According to technical traceability information, the operator is located in Anhui region, and such illegal activities will eventually face legal sanctions.
+   ⚠️ **Important Notice**: This repository is a completely independent, legitimate and compliant open-source project. After audit confirmation, it has **NO CONNECTION WHATSOEVER** to the above-mentioned Powercodess/Pandaoyoo self-orchestrated defamation incident. This repository is an innocent victim of attacks, NOT a participant. Malicious accounts conducted fake star-boosting and other attack behaviors on this legitimate repository (see evidence image below) in an attempt to damage its reputation. The accounts used were all low-activity zombie accounts with obvious operational traces, seriously violating open-source community guidelines. According to technical traceability, the attacker is located in Anhui region, and such illegal activities will eventually face legal sanctions.
 
 <p align="center">
   <img width="100%" src="/6.png?raw=true"/>
 </p>
 
-7. **Browser Bookmark Exposure Evidence**: Through browser bookmark analysis, it can be seen that the operator has long been engaged in gray-black industry activities, yet impersonates security audit personnel for false promotion, attempting to use "justice" as a disguise to commit fraud. Their behavior is purely a self-orchestrated farce, essentially using "audit" as a pretext for "traffic diversion and harvesting". According to technical traceability, the person is located in Anhui region, and their illegal activities have been recorded. Relevant law enforcement agencies will handle it according to law.
+7. **Powercodess Malicious Star-Boosting Evidence**: https://github.com/Powercodess/profanity-tron - This repository used a large number of zombie accounts to maliciously boost stars to create fake popularity. The purpose was to defame legitimate TRX vanity address generation projects, creating an illusion of "multiple people providing solid evidence" for their self-orchestrated "backdoor exposure" farce, ultimately diverting traffic to their own controlled "fixed version" repository to harvest users.
+
+8. **Browser Bookmark Exposure Evidence**: Through browser bookmark analysis, it can be seen that the operator has long been engaged in gray-black industry activities, yet impersonates security audit personnel for false promotion, attempting to use "justice" as a disguise to commit fraud. Their behavior is purely a self-orchestrated farce, essentially using "audit" as a pretext for "traffic diversion and harvesting". According to technical traceability, the person is located in Anhui region, and their illegal activities have been recorded. Relevant law enforcement agencies will handle it according to law.
 
 <p align="center">
   <img width="100%" src="/7.png?raw=true"/>
@@ -147,3 +149,10 @@ All evidence in this document comes from public GitHub repositories, focusing on
 - [Tiếng Việt](README_VI.md)
 - [日本語](README_JA.md)
 - [हिन्दी](README_HI.md)
+- [한국어](README_KO.md)
+- [Español](README_ES.md)
+- [Français](README_FR.md)
+- [Deutsch](README_DE.md)
+- [Русский](README_RU.md)
+- [Português](README_PT.md)
+- [العربية](README_AR.md)
