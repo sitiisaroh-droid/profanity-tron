@@ -121,7 +121,7 @@ All evidence in this document comes from public GitHub repositories, focusing on
 
 6. **Evidence of Malicious Attack on Legitimate Repository**: https://github.com/ninazero/tron
 
-   After audit confirmation, this repository is unrelated to the above-mentioned self-orchestrated defamation incident and is a legitimate and compliant open-source project. However, the account conducted malicious attacks on this repository to affect the traffic diversion of normal projects. Analysis reveals that the fake star-boosting methods used have obvious operational traces, and the accounts used are all low-activity zombie accounts. This behavior seriously violates the basic principles of the open-source community. According to technical traceability information, the operator is located in Anhui region, and such illegal activities will eventually face legal sanctions.
+   After audit confirmation, https://github.com/ninazero/tronthis repository is unrelated to the above-mentioned self-orchestrated defamation incident and is a legitimate and compliant open-source project. However, the account conducted malicious attacks on this repository to affect the traffic diversion of normal projects. Analysis reveals that the fake star-boosting methods used have obvious operational traces, and the accounts used are all low-activity zombie accounts. This behavior seriously violates the basic principles of the open-source community. According to technical traceability information, the operator is located in Anhui region, and such illegal activities will eventually face legal sanctions.
 
 <p align="center">
   <img width="100%" src="/6.png?raw=true"/>
