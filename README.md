@@ -11,16 +11,23 @@
 未明确时间（早于2026.04.25）
 Powercodess
 https://github.com/Powercodess/profanity-tron
+<p align="center">
+  <img width="100%" src="/1.png?raw=true"/>
+</p>
 发布“profanity-tron-后门盗u-实锤审计报告”，声称相关TRX靓号/波场靓号生成器仓库存在私钥外发等后门
 同步上述时间
 Pandaoyoo
 https://github.com/Pandaoyoo/profanity-tron
 1:1复刻Powercodess的审计报告，内容、排版、代码行号、证据链接完全一致，无任何修改，扩大TRX靓号生成器“后门”抹黑范围
 2026-05-01 21:00:00
+<p align="center">
+  <img width="100%" src="/2.png?raw=true"/>
+</p>
 
 Pandaoyoo
 https://github.com/Pandaoyoo/profanity-new-tron
 集中批量上传全部源码，宣称“修复后门、去除暗桩”，推出自称安全的TRX靓号/波场靓号/USDT钱包靓号生成器，与前两个仓库形成同步联动
+
 2026-04-25
 Powercodess（换号）
 https://github.com/GenTronx/gpu
