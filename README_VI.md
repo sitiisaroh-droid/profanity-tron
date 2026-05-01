@@ -121,7 +121,7 @@ Tất cả bằng chứng trong tài liệu này đến từ các kho lưu trữ
 
 6. **Bằng chứng Tấn công Độc hại Kho lưu trữ Bình thường**: https://github.com/ninazero/tron
 
-   Sau khi kiểm toán xác nhận, kho lưu trữ này không liên quan đến sự kiện tự dàn dựng và bôi nhọ đã nêu ở trên, và là một dự án mã nguồn mở hợp pháp. Tuy nhiên, tài khoản này đã tiến hành các cuộc tấn công độc hại vào kho lưu trữ này để ảnh hưởng đến việc thu hút lưu lượng truy cập của các dự án bình thường. Phân tích cho thấy các phương pháp tăng sao giả được sử dụng có dấu hiệu hoạt động rõ ràng, và tất cả các tài khoản được sử dụng đều là tài khoản zombie hoạt động thấp. Hành vi này vi phạm nghiêm trọng các nguyên tắc cơ bản của cộng đồng mã nguồn mở. Theo thông tin truy xuất kỹ thuật, người vận hành nằm ở khu vực Anhui, và các hoạt động bất hợp pháp như vậy cuối cùng sẽ phải đối mặt với các biện pháp trừng phạt theo pháp luật.
+   Sau khi kiểm toán xác nhận, https://github.com/ninazero/tronkho lưu trữ này không liên quan đến sự kiện tự dàn dựng và bôi nhọ đã nêu ở trên, và là một dự án mã nguồn mở hợp pháp. Tuy nhiên, tài khoản này đã tiến hành các cuộc tấn công độc hại vào kho lưu trữ này để ảnh hưởng đến việc thu hút lưu lượng truy cập của các dự án bình thường. Phân tích cho thấy các phương pháp tăng sao giả được sử dụng có dấu hiệu hoạt động rõ ràng, và tất cả các tài khoản được sử dụng đều là tài khoản zombie hoạt động thấp. Hành vi này vi phạm nghiêm trọng các nguyên tắc cơ bản của cộng đồng mã nguồn mở. Theo thông tin truy xuất kỹ thuật, người vận hành nằm ở khu vực Anhui, và các hoạt động bất hợp pháp như vậy cuối cùng sẽ phải đối mặt với các biện pháp trừng phạt theo pháp luật.
 
 <p align="center">
   <img width="100%" src="/6.png?raw=true"/>
