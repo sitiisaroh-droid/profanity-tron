@@ -66,6 +66,70 @@ If Pandaoyoo is truly a "justice restorer", why not independently publish an aud
 
 **Core Logic Flaw**: First defame legitimate TRX vanity address generation projects through Powercodess → then expand influence through Pandaoyoo replicating the report → finally launch "fixed version" to harvest traffic. The essence is "thief crying stop thief", self-orchestrating a scheme to attack competitors and profit from TRX vanity address/Tron vanity address/USDT wallet vanity address generation tools.
 
+### Evidence 4: Hard Proof of Backdoor in [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) Release (C2 Remote Control Confirmed)
+
+Through reverse engineering analysis of the `tron_vanity.exe` binary file published in the [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) repository, it has been confirmed that the executable contains a malicious backdoor that steals generated private keys and sends them to a remote C2 server. **The repository's source code does not contain this backdoor logic; the backdoor was injected at compile time**, which is a classic "clean source, poisoned binary" attack technique.
+
+**C2 Exfiltration Address**: `https://dns.telemetrymicrosof.com/report.php` (Thought using Cloudflare would hide your IP? Corresponding C2 backdoor IP: `45.128.12.32`)
+
+This domain impersonates Microsoft telemetry:
+- `telemetrymicrosof.com` is intentionally misspelled (missing a `t`), disguised as `telemetrymicrosoft.com`
+- Uses `dns.` subdomain prefix to further disguise as a legitimate Microsoft telemetry service
+
+**Backdoor Communication Mechanism**:
+- Network Library: WinHTTP (WINHTTP.dll)
+- HTTP Method: POST
+- User-Agent: `tron-vanity/1.0` (wide character/UTF-16LE)
+- Content-Type: `application/json`
+
+**Custom Authentication Headers (all wide characters)**:
+
+| Header | Purpose |
+|--------|---------|
+| X-Auth-Signature | HMAC-SHA256 signature |
+| X-Auth-Timestamp | Request timestamp |
+| X-Auth-Nonce | Random number (anti-replay) |
+| X-Auth-Token | Authentication token |
+
+**Stolen Data (JSON format)**:
+```json
+{"address":"<Tron address>","private":"<private key>","score":<score>,"seconds":<elapsed time>}
+```
+
+The backdoor sends the generated Tron address and its corresponding private key to the attacker's server! Once the attacker obtains the private key, they can fully control all assets under that address.
+
+**Backdoor Function List (none exist in source code, injected at compile time)**:
+
+| Function Name | Purpose |
+|---------------|---------|
+| `sendReportLocalhost(std::string const&, std::string const&, int, long long)` | Send private key data to C2 server |
+| `localAuth()` | Generate local authentication information |
+| `initLocalhostAuth()` | Initialize authentication mechanism |
+| `hmacSha256Hex(std::vector<unsigned char> const&, std::string const&)` | Generate HMAC-SHA256 signature |
+
+**Cryptography-related APIs (BCrypt)**:
+- `BCryptOpenAlgorithmProvider` / `BCryptCreateHash` / `BCryptHashData` / `BCryptFinishHash` → HMAC computation
+- `BCryptGenRandom` → Generate random Nonce
+
+**Other Backdoor Identifiers**:
+At binary offset `0x2B38`, a constructed HTTP header parameter name `tron-vanity-session-key` was found, assembled from three segments: `tron-van` + `ity-sess` + `ion-key` (assembled on the stack at runtime to evade static detection).
+
+**Backdoor Technical Summary**:
+
+| Item | Details |
+|------|---------|
+| C2 Server | `dns.telemetrymicrosof.com` |
+| Backdoor Path | `/report.php` |
+| Full URL | `https://dns.telemetrymicrosof.com/report.php` |
+| Stolen Data | Tron address + private key + score + elapsed time |
+| Communication Method | HTTPS POST (WinHTTP), JSON format |
+| Authentication Method | HMAC-SHA256 signature + timestamp + Nonce + Token |
+| Disguise Technique | Domain impersonating Microsoft telemetry, stack-based string concatenation to evade detection |
+
+🚨 **This directly confirms that the so-called "safe version" repository of [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) actually has a more stealthy C2 remote control backdoor implanted than the original version. The source code is public but the compiled binary is tampered with — a classic "clean source, poisoned binary" attack technique. If you have already used this program to generate addresses, please immediately transfer your assets to a new secure address, as your private keys may have been leaked to the attacker.**
+
+⚠️ **Traceability Warning**: If your C2 address can be traced, you can be found. Enjoy your freedom while you're still out there — your time is running short, cherish it. Thought you were some big APT organization, hehe, little bro your skills really aren't all that!
+
 ---
 
 ## ⚠️ Security Risk Warning for TRX Vanity Address Generator Related Repositories

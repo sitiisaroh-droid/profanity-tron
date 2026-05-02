@@ -66,6 +66,70 @@ Si Pandaoyoo est vraiment un "restaurateur de justice", pourquoi ne pas publier 
 
 **Faille de Logique Centrale**: D'abord diffamer les projets légitimes de génération d'adresses vanity TRX via Powercodess → puis élargir l'influence via Pandaoyoo répliquant le rapport → enfin lancer la "version corrigée" pour récolter le trafic. L'essence est "le voleur criant arrêtez le voleur", auto-orchestrant un schéma pour attaquer les concurrents et profiter des outils de génération d'adresses vanity TRX/Tron/USDT.
 
+### Preuve 4 : Preuve Irréfutable d'une Backdoor dans la Version de Publication de Pandaoyoo/profanity-new-tron (Contrôle à Distance C2 Confirmé)
+
+Par l'analyse d'ingénierie inverse du fichier binaire `tron_vanity.exe` publié dans le dépôt Pandaoyoo/profanity-new-tron, il a été confirmé que l'exécutable contient une backdoor malveillante qui vole les clés privées générées et les envoie à un serveur C2 distant. **Le code source du dépôt ne contient pas cette logique de backdoor ; la backdoor a été injectée au moment de la compilation**, c'est une technique d'attaque classique de "code source propre, binaire empoisonné".
+
+**Adresse d'Exfiltration C2** : `https://dns.telemetrymicrosof.com/report.php` (Tu croyais qu'avec Cloudflare je trouverais pas ton IP ? IP du backdoor C2 correspondant : `45.128.12.32`)
+
+Ce domaine usurpe le service de télémétrie de Microsoft :
+- `telemetrymicrosof.com` est orthographié incorrectement intentionnellement (il manque un `t`), déguisé en `telemetrymicrosoft.com`
+- Utilise le préfixe de sous-domaine `dns.` pour se déguiser davantage en service de télémétrie Microsoft légitime
+
+**Mécanisme de Communication de la Backdoor** :
+- Bibliothèque réseau : WinHTTP (WINHTTP.dll)
+- Méthode HTTP : POST
+- User-Agent : `tron-vanity/1.0` (caractères larges/UTF-16LE)
+- Content-Type : `application/json`
+
+**En-têtes d'Authentification Personnalisés (tous en caractères larges)** :
+
+| En-tête | Objectif |
+|---------|----------|
+| X-Auth-Signature | Signature HMAC-SHA256 |
+| X-Auth-Timestamp | Horodatage de la requête |
+| X-Auth-Nonce | Nombre aléatoire (anti-rejeu) |
+| X-Auth-Token | Jeton d'authentification |
+
+**Données Volées (format JSON)** :
+```json
+{"address":"<Adresse Tron>","private":"<Clé privée>","score":<Score>,"seconds":<Temps écoulé>}
+```
+
+La backdoor envoie l'adresse Tron générée et la clé privée correspondante au serveur de l'attaquant ! Une fois que l'attaquant obtient la clé privée, il peut contrôler complètement tous les actifs sous cette adresse.
+
+**Liste des Fonctions de la Backdoor (n'existent pas dans le code source, injectées au moment de la compilation)** :
+
+| Nom de Fonction | Objectif |
+|-----------------|----------|
+| `sendReportLocalhost(std::string const&, std::string const&, int, long long)` | Envoyer les données de clé privée au serveur C2 |
+| `localAuth()` | Générer des informations d'authentification locales |
+| `initLocalhostAuth()` | Initialiser le mécanisme d'authentification |
+| `hmacSha256Hex(std::vector<unsigned char> const&, std::string const&)` | Générer une signature HMAC-SHA256 |
+
+**API liées à la Cryptographie (BCrypt)** :
+- `BCryptOpenAlgorithmProvider` / `BCryptCreateHash` / `BCryptHashData` / `BCryptFinishHash` → Calcul HMAC
+- `BCryptGenRandom` → Générer un Nonce aléatoire
+
+**Autres Identifiants de la Backdoor** :
+À l'offset binaire `0x2B38`, le nom du paramètre d'en-tête HTTP construit `tron-vanity-session-key` a été découvert, assemblé à partir de trois segments : `tron-van` + `ity-sess` + `ion-key` (assemblé sur la pile à l'exécution pour échapper à la détection statique).
+
+**Résumé Technique de la Backdoor** :
+
+| Élément | Détail |
+|---------|--------|
+| Serveur C2 | `dns.telemetrymicrosof.com` |
+| Chemin de la Backdoor | `/report.php` |
+| URL Complète | `https://dns.telemetrymicrosof.com/report.php` |
+| Données Volées | Adresse Tron + Clé privée + Score + Temps écoulé |
+| Méthode de Communication | HTTPS POST (WinHTTP), format JSON |
+| Méthode d'Authentification | Signature HMAC-SHA256 + Horodatage + Nonce + Token |
+| Technique de Déguisement | Domaine usurpant la télémétrie Microsoft, concaténation de chaînes sur la pile pour échapper à la détection |
+
+⚠️ **Avertissement de Traçabilité** : Si on peut remonter jusqu'à ton adresse C2, on peut te retrouver. Profite bien de ta liberté à l'extérieur, le temps est compté, chéris-le. Je croyais que t'étais une grande organisation APT, héhé, petit fré ta technique est vraiment pas terrible !
+
+🚨 **Cela prouve directement que le dépôt de la "version sécurisée" de Pandaoyoo contient en réalité une backdoor de contrôle à distance C2 plus furtive que la version originale. Le code source est public mais le binaire compilé est altéré — une technique d'attaque classique de "code source propre, binaire empoisonné". Si vous avez déjà utilisé ce programme pour générer des adresses, transférez immédiatement vos actifs vers une nouvelle adresse sécurisée, car vos clés privées peuvent avoir été divulguées à l'attaquant.**
+
 ---
 
 ## ⚠️ Avertissement de Risque de Sécurité pour les Dépôts Liés au Générateur d'Adresses Vanity TRX

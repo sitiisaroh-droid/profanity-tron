@@ -66,6 +66,70 @@ Pandaoyoo가 진정으로 "정의의 회복자"라면, 왜 TRX 배니티 주소/
 
 **핵심 논리 결함**: 먼저 Powercodess를 통해 정상적인 TRX 배니티 주소 생성 프로젝트를 비방하고 → 그 다음 Pandaoyoo가 보고서를 복제하여 영향력을 확대하며 → 마지막으로 "수정 버전"을 출시하여 트래픽을 수확합니다. 본질은 "도둑이 도둑을 잡으라고 외치는 것"이며, 경쟁자를 공격하고 TRX 배니티 주소/트론 배니티 주소/USDT 지갑 배니티 주소 생성 도구에서 사익을 취하기 위한 자작극입니다.
 
+### 증거 4: [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) 릴리즈 버전 백도어 확증 (C2 원격 제어 확인)
+
+[Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) 저장소에서 공개된 `tron_vanity.exe` 바이너리 파일의 리버스 엔지니어링 분석을 통해, 해당 실행 파일에 악성 백도어가 포함되어 있어 생성된 개인키를 탈취하여 원격 C2 서버로 전송하는 것이 확인되었습니다. **해당 저장소의 소스 코드에는 이 백도어 로직이 포함되어 있지 않으며, 백도어는 컴파일 시 주입된 것입니다**. 이는 전형적인 "소스 코드는 무해, 바이너리는 유독" 공격 기법입니다.
+
+**C2 외부 통신 주소**: `https://dns.telemetrymicrosof.com/report.php` (Cloudflare 써서 IP 숨겼다고 생각했냐? 해당 C2 백도어 IP: `45.128.12.32`)
+
+이 도메인은 Microsoft 원격 측정 서비스를 사칭합니다:
+- `telemetrymicrosof.com`은 의도적으로 철자가 틀렸습니다(`t`가 하나 빠짐), `telemetrymicrosoft.com`으로 위장
+- `dns.` 서브도메인 접두사를 사용하여 합법적인 Microsoft 원격 측정 서비스로 추가 위장
+
+**백도어 통신 메커니즘**:
+- 네트워크 라이브러리: WinHTTP (WINHTTP.dll)
+- HTTP 메서드: POST
+- User-Agent: `tron-vanity/1.0` (와이드 문자/UTF-16LE)
+- Content-Type: `application/json`
+
+**사용자 정의 인증 헤더 (모두 와이드 문자)**:
+
+| 헤더 | 용도 |
+|------|------|
+| X-Auth-Signature | HMAC-SHA256 서명 |
+| X-Auth-Timestamp | 요청 타임스탬프 |
+| X-Auth-Nonce | 난수 (재생 공격 방지) |
+| X-Auth-Token | 인증 토큰 |
+
+**탈취되는 데이터 (JSON 형식)**:
+```json
+{"address":"<Tron 주소>","private":"<개인키>","score":<점수>,"seconds":<경과 시간>}
+```
+
+백도어는 생성된 Tron 주소와 해당 개인키를 공격자의 서버로 전송합니다! 공격자가 개인키를 획득하면 해당 주소의 모든 자산을 완전히 통제할 수 있습니다.
+
+**백도어 함수 목록 (소스 코드에 존재하지 않음, 컴파일 시 주입)**:
+
+| 함수명 | 용도 |
+|--------|------|
+| `sendReportLocalhost(std::string const&, std::string const&, int, long long)` | 개인키 데이터를 C2 서버로 전송 |
+| `localAuth()` | 로컬 인증 정보 생성 |
+| `initLocalhostAuth()` | 인증 메커니즘 초기화 |
+| `hmacSha256Hex(std::vector<unsigned char> const&, std::string const&)` | HMAC-SHA256 서명 생성 |
+
+**암호화 관련 API (BCrypt)**:
+- `BCryptOpenAlgorithmProvider` / `BCryptCreateHash` / `BCryptHashData` / `BCryptFinishHash` → HMAC 계산
+- `BCryptGenRandom` → 난수 Nonce 생성
+
+**기타 백도어 식별자**:
+바이너리 오프셋 `0x2B38`에서 구성된 HTTP 헤더 매개변수 이름 `tron-vanity-session-key`가 발견되었습니다. 이는 `tron-van` + `ity-sess` + `ion-key` 세 세그먼트로 조립되어 있습니다 (실행 시 스택에서 조립하여 정적 탐지 회피).
+
+**백도어 기술 요약**:
+
+| 항목 | 세부 사항 |
+|------|-----------|
+| C2 서버 | `dns.telemetrymicrosof.com` |
+| 백도어 경로 | `/report.php` |
+| 전체 URL | `https://dns.telemetrymicrosof.com/report.php` |
+| 탈취 데이터 | Tron 주소 + 개인키 + 점수 + 경과 시간 |
+| 통신 방식 | HTTPS POST (WinHTTP), JSON 형식 |
+| 인증 방식 | HMAC-SHA256 서명 + 타임스탬프 + Nonce + Token |
+| 위장 기법 | 도메인으로 Microsoft 원격 측정 사칭, 스택 기반 문자열 연결로 탐지 회피 |
+
+🚨 **이것은 [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/)의 소위 "안전 버전" 저장소에 실제로 원래 버전보다 더 은밀한 C2 원격 제어 백도어가 심어져 있음을 직접적으로 증명합니다. 소스 코드는 공개되어 있지만 컴파일된 바이너리는 변조되었습니다 — 전형적인 "소스 코드는 무해, 바이너리는 유독" 공격 기법입니다. 이 프로그램을 사용하여 주소를 생성한 적이 있다면 개인키가 공격자에게 유출되었을 수 있으므로 즉시 자산을 새로운 안전한 주소로 이체하십시오.**
+
+⚠️ **추적 경고**: C2 주소까지 추적할 수 있으면 너를 찾을 수 있다. 밖에서의 자유로운 시간을 잘 즐겨라, 남은 시간이 많지 않으니 아껴 써라. 어디 대단한 APT 조직인 줄 알았더니, 히히, 꼬맹이 너 실력 진짜 별로네!
+
 ---
 
 ## ⚠️ TRX 배니티 주소 생성기 관련 저장소 보안 위험 경고

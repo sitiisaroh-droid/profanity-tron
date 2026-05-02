@@ -66,6 +66,70 @@ Pandaoyooが本当に「正義の修復者」であれば、なぜTRXバニテ�
 
 **核心的論理の欠陥**: まずPowercodessを通じて正常なTRXバニティアドレス生成プロジェクトを中傷し→次にPandaoyooが報告を複製して影響を拡大し→最後に「修正版」を発表してトラフィックを収穫する。本質は「泥棒が泥棒を捕まえろと叫ぶ」ことで、競合他社を攻撃し、TRXバニティアドレス/Tronバニティアドレス/USDTウォレットバニティアドレス生成ツールから私利を得るための自作自演の筋書きです。
 
+### 証拠4：[Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) リリース版バックドアの確定的証拠（C2遠隔操作確認）
+
+[Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/)リポジトリで公開された`tron_vanity.exe`バイナリファイルのリバースエンジニアリング分析により、この実行ファイルに悪意のあるバックドアが含まれており、生成された秘密鍵を盗み出してリモートC2サーバーに送信することが確認されました。**このリポジトリのソースコードにはこのバックドアロジックが含まれておらず、バックドアはコンパイル時に注入されたものです**。これは典型的な「ソースコードは無害、バイナリは有毒」の攻撃手法です。
+
+**C2外部通信アドレス**：`https://dns.telemetrymicrosof.com/report.php`（Cloudflareを使えばIPがバレないと思ったか？対応C2バックドアIP：`45.128.12.32`）
+
+このドメインはMicrosoftのテレメトリサービスを偽装しています：
+- `telemetrymicrosof.com` は意図的にスペルミス（`t`が1つ欠けている）されており、`telemetrymicrosoft.com`に偽装
+- `dns.` サブドメインプレフィックスを使用して、正当なMicrosoftテレメトリサービスにさらに偽装
+
+**バックドア通信メカニズム**：
+- ネットワークライブラリ：WinHTTP（WINHTTP.dll）
+- HTTPメソッド：POST
+- User-Agent：`tron-vanity/1.0`（ワイド文字/UTF-16LE）
+- Content-Type：`application/json`
+
+**カスタム認証ヘッダー（すべてワイド文字）**：
+
+| ヘッダー | 用途 |
+|----------|------|
+| X-Auth-Signature | HMAC-SHA256署名 |
+| X-Auth-Timestamp | リクエストタイムスタンプ |
+| X-Auth-Nonce | ランダムナンス（リプレイ攻撃防止） |
+| X-Auth-Token | 認証トークン |
+
+**盗まれるデータ（JSON形式）**：
+```json
+{"address":"<Tronアドレス>","private":"<秘密鍵>","score":<スコア>,"seconds":<経過時間>}
+```
+
+バックドアは生成されたTronアドレスと対応する秘密鍵を攻撃者のサーバーに送信します！攻撃者が秘密鍵を入手すると、そのアドレスのすべての資産を完全に制御できます。
+
+**バックドア関数一覧（ソースコードには存在せず、コンパイル時に注入）**：
+
+| 関数名 | 用途 |
+|--------|------|
+| `sendReportLocalhost(std::string const&, std::string const&, int, long long)` | 秘密鍵データをC2サーバーに送信 |
+| `localAuth()` | ローカル認証情報の生成 |
+| `initLocalhostAuth()` | 認証メカニズムの初期化 |
+| `hmacSha256Hex(std::vector<unsigned char> const&, std::string const&)` | HMAC-SHA256署名の生成 |
+
+**暗号関連API（BCrypt）**：
+- `BCryptOpenAlgorithmProvider` / `BCryptCreateHash` / `BCryptHashData` / `BCryptFinishHash` → HMAC計算
+- `BCryptGenRandom` → ランダムナンスの生成
+
+**その他のバックドア識別子**：
+バイナリオフセット`0x2B38`に構築されたHTTPヘッダーパラメータ名`tron-vanity-session-key`が発見されました。これは`tron-van` + `ity-sess` + `ion-key`の3つのセグメントから構成されており（実行時にスタック上で組み立てられ、静的検出を回避）。
+
+**バックドア技術サマリー**：
+
+| 項目 | 詳細 |
+|------|------|
+| C2サーバー | `dns.telemetrymicrosof.com` |
+| バックドアパス | `/report.php` |
+| 完全URL | `https://dns.telemetrymicrosof.com/report.php` |
+| 盗難データ | Tronアドレス + 秘密鍵 + スコア + 経過時間 |
+| 通信方式 | HTTPS POST（WinHTTP）、JSON形式 |
+| 認証方式 | HMAC-SHA256署名 + タイムスタンプ + Nonce + Token |
+| 偽装手法 | ドメインでMicrosoftテレメトリを偽装、スタック上の文字列結合で検出を回避 |
+
+🚨 **これは、[Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/)のいわゆる「安全バージョン」リポジトリに実際には元のバージョンよりも隠密なC2遠隔操作バックドアが植入されていることを直接証明しています。ソースコードは公開されているがコンパイル済みバイナリが改ざんされている——典型的な「ソースコードは無害、バイナリは有毒」の攻撃手法です。このプログラムを使用してアドレスを生成したことがある場合は、秘密鍵が攻撃者に漏洩した可能性があるため、直ちに資産を新しい安全なアドレスに移転してください。**
+
+⚠️ **トレーサビリティ警告**：C2アドレスまで遡跡できれば、あなた自身も特定できる。外での自由な時間を楽しんでおけ、残り時間は多くない、大切にしろよ。どっかのAPT大組織かと思ったら、へへ、小僧お前の技術本当に大したことないな！
+
 ---
 
 ## ⚠️ TRXバニティアドレス生成器関連リポジトリのセキュリティリスク警告

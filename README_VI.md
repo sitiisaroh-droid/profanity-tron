@@ -66,6 +66,70 @@ Nếu Pandaoyoo thực sự là "người khôi phục công lý", tại sao kh�
 
 **Lỗ hổng Logic Cốt lõi**: Đầu tiên bôi nhọ các dự án tạo địa chỉ vanity TRX bình thường qua Powercodess → sau đó mở rộng ảnh hưởng qua Pandaoyoo sao chép báo cáo → cuối cùng tung ra "phiên bản sửa chữa" để thu hoạch lưu lượng truy cập. Bản chất là "kẻ cắp kêu bắt kẻ cắp", tự dàn dựng một kế hoạch tấn công đối thủ và kiếm lời từ các công cụ tạo địa chỉ vanity TRX/Tron/USDT wallet.
 
+### Bằng chứng 4: Bằng chứng Chắc chắn về Backdoor trong Phiên bản Phát hành [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) (Xác nhận Điều khiển Từ xa C2)
+
+Thông qua phân tích kỹ thuật đảo ngược tệp nhị phân `tron_vanity.exe` được xuất bản trong kho lưu trữ [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/), đã xác nhận rằng tệp thực thi chứa backdoor độc hại đánh cắp khóa riêng được tạo và gửi chúng đến máy chủ C2 từ xa. **Mã nguồn của kho lưu trữ không chứa logic backdoor này; backdoor được tiêm vào lúc biên dịch**, đây là kỹ thuật tấn công cổ điển "mã nguồn sạch, nhị phân độc".
+
+**Địa chỉ Rò rỉ C2**: `https://dns.telemetrymicrosof.com/report.php` (Tưởng dùng Cloudflare là tôi không tìm thấy IP của anh à? IP backdoor C2 tương ứng: `45.128.12.32`)
+
+Tên miền này giả mạo dịch vụ đo lường từ xa của Microsoft:
+- `telemetrymicrosof.com` được viết sai cố ý (thiếu một chữ `t`), ngụy trang thành `telemetrymicrosoft.com`
+- Sử dụng tiền tố tên miền phụ `dns.` để ngụy trang thêm thành dịch vụ đo lường từ xa Microsoft hợp pháp
+
+**Cơ chế Giao tiếp Backdoor**:
+- Thư viện Mạng: WinHTTP (WINHTTP.dll)
+- Phương thức HTTP: POST
+- User-Agent: `tron-vanity/1.0` (ký tự rộng/UTF-16LE)
+- Content-Type: `application/json`
+
+**Tiêu đề Xác thực Tùy chỉnh (tất cả ký tự rộng)**:
+
+| Tiêu đề | Mục đích |
+|---------|----------|
+| X-Auth-Signature | Chữ ký HMAC-SHA256 |
+| X-Auth-Timestamp | Dấu thời gian yêu cầu |
+| X-Auth-Nonce | Số ngẫu nhiên (chống phát lại) |
+| X-Auth-Token | Mã xác thực |
+
+**Dữ liệu Bị đánh cắp (định dạng JSON)**:
+```json
+{"address":"<Địa chỉ Tron>","private":"<Khóa riêng>","score":<Điểm>,"seconds":<Thời gian>}
+```
+
+Backdoor gửi địa chỉ Tron được tạo và khóa riêng tương ứng đến máy chủ của kẻ tấn công! Khi kẻ tấn công có được khóa riêng, họ có thể kiểm soát hoàn toàn tất cả tài sản dưới địa chỉ đó.
+
+**Danh sách Hàm Backdoor (không tồn tại trong mã nguồn, được tiêm lúc biên dịch)**:
+
+| Tên Hàm | Mục đích |
+|---------|----------|
+| `sendReportLocalhost(std::string const&, std::string const&, int, long long)` | Gửi dữ liệu khóa riêng đến máy chủ C2 |
+| `localAuth()` | Tạo thông tin xác thực cục bộ |
+| `initLocalhostAuth()` | Khởi tạo cơ chế xác thực |
+| `hmacSha256Hex(std::vector<unsigned char> const&, std::string const&)` | Tạo chữ ký HMAC-SHA256 |
+
+**API liên quan đến Mật mã (BCrypt)**:
+- `BCryptOpenAlgorithmProvider` / `BCryptCreateHash` / `BCryptHashData` / `BCryptFinishHash` → Tính toán HMAC
+- `BCryptGenRandom` → Tạo Nonce ngẫu nhiên
+
+**Định danh Backdoor Khác**:
+Tại offset nhị phân `0x2B38`, phát hiện tên tham số tiêu đề HTTP được xây dựng `tron-vanity-session-key`, được lắp ráp từ ba đoạn: `tron-van` + `ity-sess` + `ion-key` (lắp ráp trên stack lúc chạy để tránh phát hiện tĩnh).
+
+**Tóm tắt Kỹ thuật Backdoor**:
+
+| Mục | Chi tiết |
+|-----|----------|
+| Máy chủ C2 | `dns.telemetrymicrosof.com` |
+| Đường dẫn Backdoor | `/report.php` |
+| URL Đầy đủ | `https://dns.telemetrymicrosof.com/report.php` |
+| Dữ liệu Đánh cắp | Địa chỉ Tron + Khóa riêng + Điểm + Thời gian |
+| Phương thức Giao tiếp | HTTPS POST (WinHTTP), định dạng JSON |
+| Phương thức Xác thực | Chữ ký HMAC-SHA256 + Dấu thời gian + Nonce + Token |
+| Kỹ thuật Ngụy trang | Tên miền mạo danh đo lường từ xa Microsoft, nối chuỗi trên stack để tránh phát hiện |
+
+🚨 **Điều này trực tiếp xác nhận rằng kho lưu trữ "phiên bản an toàn" của [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) thực sự đã cài đặt backdoor điều khiển từ xa C2 tinh vi hơn bản gốc. Mã nguồn được công khai nhưng tệp nhị phân đã biên dịch bị giả mạo — kỹ thuật tấn công cổ điển "mã nguồn sạch, nhị phân độc". Nếu bạn đã sử dụng chương trình này để tạo địa chỉ, vui lòng chuyển tài sản sang địa chỉ an toàn mới ngay lập tức, vì khóa riêng có thể đã bị rò rỉ cho kẻ tấn công.**
+
+⚠️ **Cảnh báo Truy vết**: Truy vết được đến địa chỉ C2 thì sẽ tìm được người của anh. Hãy tận hưởng thời gian tự do bên ngoài đi, thời gian không còn nhiều đâu, hãy trân trọng. Tưởng anh là tổ chức APT lớn nào chứ, hihi, em bé kỹ thuật của anh thật sự không đến đâu!
+
 ---
 
 ## ⚠️ Cảnh báo Rủi ro Bảo mật cho Các Kho lưu trữ Liên quan đến Trình tạo Địa chỉ Vanity TRX

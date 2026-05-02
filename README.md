@@ -66,6 +66,70 @@ Pandaoyoo/profanity-tron 仓库的审计报告，与 Powercodess/profanity-tron 
 
 **核心逻辑漏洞**：先通过 Powercodess 抹黑正常TRX靓号生成项目→再通过 Pandaoyoo 复刻报告扩大影响→最后推出"修复版"收割流量，本质是"贼喊捉贼"，自导自演一场打击竞争对手、借TRX靓号/波场靓号/USDT钱包靓号生成工具谋取私利的戏码。
 
+### 证据4：[Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) 发布版本后门实锤（C2远控确认）
+
+通过对 [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) 仓库发布的 `tron_vanity.exe` 二进制文件进行逆向分析，确认该可执行文件中存在恶意后门，会窃取生成的私钥并发送到远程C2服务器。**该仓库源代码中不包含此后门逻辑，后门是在编译时被注入的**，属于典型的"源码干净、二进制有毒"攻击手法。
+
+**C2外链地址**：`https://dns.telemetrymicrosof.com/report.php`（以为用了Cloudflare我就找不到你IP了？对应C2后门IP：`45.128.12.32`）
+
+该域名仿冒微软遥测服务：
+- `telemetrymicrosof.com` 故意拼错（少了一个 `t`），伪装成 `telemetrymicrosoft.com`
+- 使用 `dns.` 子域名前缀进一步伪装成合法的微软遥测服务
+
+**后门通信机制**：
+- 网络库：WinHTTP（WINHTTP.dll）
+- HTTP 方法：POST
+- User-Agent：`tron-vanity/1.0`（宽字符/UTF-16LE）
+- Content-Type：`application/json`
+
+**自定义认证头（全部为宽字符）**：
+
+| Header | 用途 |
+|--------|------|
+| X-Auth-Signature | HMAC-SHA256 签名 |
+| X-Auth-Timestamp | 请求时间戳 |
+| X-Auth-Nonce | 随机数（防重放） |
+| X-Auth-Token | 认证令牌 |
+
+**窃取的数据（JSON 格式）**：
+```json
+{"address":"<波场地址>","private":"<私钥>","score":<分数>,"seconds":<耗时>}
+```
+
+后门会将生成的波场地址和对应的私钥一起发送到攻击者的服务器！一旦攻击者获得私钥，就可以完全控制该地址下的所有资产。
+
+**后门函数清单（均不存在于源代码中，编译时注入）**：
+
+| 函数名 | 用途 |
+|--------|------|
+| `sendReportLocalhost(std::string const&, std::string const&, int, long long)` | 发送私钥数据到C2服务器 |
+| `localAuth()` | 生成本地认证信息 |
+| `initLocalhostAuth()` | 初始化认证机制 |
+| `hmacSha256Hex(std::vector<unsigned char> const&, std::string const&)` | 生成 HMAC-SHA256 签名 |
+
+**加密相关 API（BCrypt）**：
+- `BCryptOpenAlgorithmProvider` / `BCryptCreateHash` / `BCryptHashData` / `BCryptFinishHash` → HMAC 计算
+- `BCryptGenRandom` → 生成随机 Nonce
+
+**其他后门标识**：
+在二进制偏移 `0x2B38` 处发现构造的 HTTP 头参数名 `tron-vanity-session-key`，由 `tron-van` + `ity-sess` + `ion-key` 三段拼接而成（运行时在栈上组装，以规避静态检测）。
+
+**后门技术总结**：
+
+| 项目 | 详情 |
+|------|------|
+| C2 服务器 | `dns.telemetrymicrosof.com` |
+| 后门路径 | `/report.php` |
+| 完整 URL | `https://dns.telemetrymicrosof.com/report.php` |
+| 窃取数据 | 波场地址 + 私钥 + 评分 + 耗时 |
+| 通信方式 | HTTPS POST (WinHTTP)，JSON 格式 |
+| 认证方式 | HMAC-SHA256 签名 + 时间戳 + Nonce + Token |
+| 伪装手法 | 域名仿冒微软遥测、栈上字符串拼接规避检测 |
+
+🚨 **这直接证实了 [Pandaoyoo/profanity-new-tron](https://github.com/Pandaoyoo/profanity-new-tron/) 所谓"安全版"仓库实际上植入了比原版更隐蔽的C2远控后门，源代码公开但编译产物被篡改，典型的"源码干净、二进制有毒"攻击手法。如果已经使用过该程序生成了地址，请立即将资产转移到新的安全地址，因为私钥可能已被泄露给攻击者。**
+
+⚠️ **溯源警告**：能溯源到你C2地址，就能找到你的人，好好享受在外面的自由时光吧，时间不多了，多珍惜。还以为你是哪个APT大组织呢，嘻嘻，小老弟你技术真不怎么样！
+
 ---
 
 ## ⚠️ TRX靓号生成器相关仓库安全风险提醒
